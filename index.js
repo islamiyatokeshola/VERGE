@@ -4,11 +4,7 @@ const db = require("./database");
 const parcel = require("./route");
 
 let app = express();
-let port = 3000;
-// db.query('SELECT NOW()',(res, err)=>{
-//     console.log(err,res)
-//     db.end()
-//     });
+let port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(port, () => {
