@@ -113,28 +113,6 @@ router.post("/auth/login",
     }
 );
 
-// router.post(
-//     "/parcel/:user_id",
-//     async (req, res, next) => {
-//         const value = await schema.parcel.validate(req.body)
-//         if (value.error) {
-//             res.json({
-//                 message: value.error.details[0].message
-//             })
-//         }
-//         next();
-//     },
-//     async (req, res) => {
-//         const { user_id } = req.params;
-//         try {
-//             const result = await createNewParcel(user_id, req.body);
-//             return res.status(201).json(result);
-//         } catch (e) {
-//             return res.status(e.code).json(e);
-//         }
-//     }
-// )
-
 router.post(
     "/parcel/:user_id",
     async (req, res, next) => {
