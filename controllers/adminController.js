@@ -11,17 +11,18 @@ async function createNewAdmin(body) {
     const created_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const { email, password, first_name, last_name, state } = body;
     const is_admin = true;
+    const is_super_admin = false;
     const hashedPassword = hashPassword(password)
     const queryObj = {
         text: queries.addNewUser,
-        values: [email, hashedPassword, first_name, last_name, state, created_at, is_admin],
+        values: [email, hashedPassword, first_name, last_name, state, created_at, created_at, is_admin, is_super_admin],
     };
 
     try {
 
         const { rowCount, rows } = await db.query(queryObj);
         const response = rows[0];
-        const tokens = generateUserToken(response.id, response.first_name, response.last_name, response.email, response.is_admin, response.state);
+        const tokens = generateUserToken(response.first_name, response.id, response.last_name, response.email, response.is_admin, response.is_super_admin, response.state);
         const data = {
             token: tokens,
             response
@@ -49,21 +50,52 @@ async function createNewAdmin(body) {
             message: "Error creating user",
         });
     }
-}
+};
 
-async function changeOrderStatus(user_id, id, body) {
-    const { status } = body
+async function checkIfUserDoesNotExistBefore(email) {
     const queryObj = {
-        text: queries.updateOrderStatusById,
-        values: [status, user_id, id]
-    }
+        text: queries.findUserByEmail,
+        values: [email],
+    };
+    console.log(email);
+    console.log(queries.findUserByEmail);
     try {
         const { rowCount } = await db.query(queryObj);
-        if (rowCount === 0) {
+        if (rowCount == 0) {
+            return Promise.resolve();
+        }
+        if (rowCount > 0) {
+            return Promise.reject({
+                status: "erorr",
+                code: 409,
+                message: "User Already Exists",
+            });
+        }
+    } catch (e) {
+        console.log(e);
+        return Promise.reject({
+            status: "error",
+            code: 500,
+            message: "Error finding user",
+        });
+    }
+}
+
+async function changeOrderStatus(id, body) {
+    const { status } = body;
+    const d = new Date();
+    const updated_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
+    const queryObj = {
+        text: queries.updateOrderStatusById,
+        values: [status, updated_at, id]
+    }
+    try {
+        const { rows, rowCount } = await db.query(queryObj);
+        if (rowCount == 0) {
             return Promise.reject({
                 status: "error",
                 code: 500,
-                message: "order id could not b found"
+                message: "order id could not be found"
             });
         }
         if (rowCount > 0) {
@@ -71,6 +103,10 @@ async function changeOrderStatus(user_id, id, body) {
                 status: "success",
                 code: 200,
                 message: "Status Updated successfully",
+                data: {
+                    status: rows[0].status,
+                    user_id: rows[0].user_id
+                }
             });
         }
     } catch (e) {
@@ -83,19 +119,21 @@ async function changeOrderStatus(user_id, id, body) {
     }
 }
 
-async function changeOrderlocation(user_id, id, body) {
-    const { location } = body
+async function changeOrderlocation(id, body) {
+    const { location } = body;
+    const d = new Date();
+    const updated_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const queryObj = {
         text: queries.updateOrderlocationById,
-        values: [location, user_id, id]
+        values: [location, updated_at, id]
     }
     try {
-        const { rowCount } = await db.query(queryObj);
+        const { rows, rowCount } = await db.query(queryObj);
         if (rowCount === 0) {
             return Promise.reject({
                 status: "error",
                 code: 500,
-                message: "order id could not b found"
+                message: "order id could not be found"
             });
         }
         if (rowCount > 0) {
@@ -103,6 +141,10 @@ async function changeOrderlocation(user_id, id, body) {
                 status: "success",
                 code: 200,
                 message: "location Updated successfully",
+                data: {
+                    location: rows[0].location,
+                    user_id: rows[0].user_id
+                }
             });
         }
     } catch (e) {
@@ -113,7 +155,8 @@ async function changeOrderlocation(user_id, id, body) {
             message: "Error updating location"
         })
     }
-}
+};
+
 async function getAllParcel() {
     const queryObj = {
         text: queries.getAllUserOrder
@@ -130,10 +173,10 @@ async function getAllParcel() {
         return Promise.reject({
             status: "Error",
             code: 500,
-            message: "Error fetching all parcels"
+            message: "Error fetching all blogs"
         })
     }
-}
+};
 
 async function isAdmin(id) {
     const queryObj = {
@@ -164,6 +207,7 @@ async function isAdmin(id) {
 
 module.exports = {
     createNewAdmin,
+    checkIfUserDoesNotExistBefore,
     changeOrderStatus,
     changeOrderlocation,
     getAllParcel,

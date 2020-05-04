@@ -8,11 +8,13 @@ async function createNewParcel(user_id, body) {
     const d = new Date();
     const created_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const status = "pending"
+
     const { price, weight, location, destination, sender_name, sender_note } = body;
     const queryObj = {
         text: queries.addNewParcel,
-        values: [user_id, price, weight, location, destination, sender_name, sender_note, status, created_at],
+        values: [user_id, price, weight, location, destination, sender_name, sender_note, status, created_at, created_at],
     };
+
     try {
         const { rowCount } = await db.query(queryObj);
         if (rowCount == 0) {
@@ -26,7 +28,7 @@ async function createNewParcel(user_id, body) {
             return Promise.resolve({
                 status: "success",
                 code: 201,
-                message: "order created successfully",
+                message: "Order created successfully",
             });
         }
     } catch (e) {
@@ -39,60 +41,60 @@ async function createNewParcel(user_id, body) {
     }
 }
 
-async function getUserParcelBysenderName(user_id, id) {
-    const queryObj = {
-        text: queries.getUserSpecific,
-        values: [user_id, id]
+async function getSpecificUserParcel(user_id, id){
+    const queryObj ={
+        text: queries.getSpecificUserOrder,
+        values:[user_id, id]
     };
-    try {
-        const { rows, rowCount } = await db.query(queryObj);
-        if (rowCount > 0) {
-            return Promise.resolve({
-                status: "success",
-                code: 200,
-                message: "this is your placed order",
-                data: rows
-            })
+    try{
+        const {rows, rowCount} = await db.query(queryObj);
+        if(rowCount > 0){
+           return Promise.resolve({
+               status:"success",
+               code:200,
+               message:"this is your placed order",
+               data: rows
+           })
         }
-        if (rowCount === 0) {
+        if(rowCount === 0){
             return Promise.reject({
-                status: "error",
-                code: 400,
-                message: "could not get order",
+                status:"error",
+                code:400,
+                message:"could not get sender",
             })
         }
-    } catch (e) {
+    }catch(e){
         return Promise.reject({
-            status: "Error",
+            status:"Error",
             code: 500,
             message: "Error finding sender"
         });
     }
-}
+};
 
-async function getUserParcelByid(user_id) {
+async function getUserParcelByid(user_id){
     const queryObj = {
         text: queries.getUserOrderById,
-        values: [user_id]
+        values:[user_id]
     }
-    try {
-        const { rows, rowCount } = await db.query(queryObj);
-        if (rowCount == 0) {
+    try{
+        const {rows, rowCount } =await db.query(queryObj);
+        if(rowCount == 0 ){
             return Promise.reject({
                 status: "error",
-                code: 500,
-                message: "Order not find"
+                code:500,
+                message:"Order not find"
             });
         }
-        if (rowCount > 0) {
+        if(rowCount > 0){
             return Promise.resolve({
                 status: "success",
-                code: 200,
-                message: "this is your order",
-                data: rows
+                code:200,
+                message:"this is your order",
+                data : rows
             });
         }
-    } catch (e) {
+    }catch(e){
         return Promise.reject({
             status: "error",
             code: 500,
@@ -101,66 +103,68 @@ async function getUserParcelByid(user_id) {
     }
 }
 
-async function deleteUserParcelById(user_id, id) {
+async function cancelParcelOrderById(user_id, id){
     const queryObj = {
-        text: queries.deleteUserOrderById,
-        values: [user_id, id]
+        text: queries.cancelParcelOrderById,
+        values:[user_id, id]
     }
-    try {
+    try{
         const { rowCount } = await db.query(queryObj);
-        if (rowCount === 0) {
+        if(rowCount === 0 ){
             return Promise.reject({
                 status: "error",
-                code: 500,
-                message: "order id could not b found"
+                code:500,
+                message:"Order could not be found"
             });
         }
-        if (rowCount > 0) {
+        if(rowCount > 0){
             return Promise.resolve({
                 status: "success",
-                code: 200,
-                message: "Order deleted successfully",
+                code:200,
+                message:"Order Cancelled successfully",
             });
         }
-    } catch (e) {
+    }catch(e){
         return Promise.reject({
             status: "error",
             code: 500,
-            message: "Error deleting Order"
+            message: "Error Cancelling Order"
         })
     }
 }
 
-async function updateOrderDestination(user_id, id, body) {
-    const { destination } = body
+async function updateOrderDestination(user_id, id, body){
+    const { destination } = body;
+    const d = new Date();
+    const updated_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const queryObj = {
         text: queries.updateOrderDestinationById,
-        values: [destination, user_id, id]
+        values:[ destination, user_id, updated_at, id]
     }
-    try {
+    try{
         const { rows, rowCount } = await db.query(queryObj);
-        if (rowCount === 0) {
+        if(rowCount === 0 ){
             return Promise.reject({
                 status: "error",
-                code: 500,
-                message: "order id could not b found"
+                code:500,
+                message:"order id could not be found"
             });
         }
-        if (rowCount > 0 && rows[0].status == "pending") {
+        if(rowCount > 0 && rows[0].status == "pending"){
             return Promise.resolve({
                 status: "success",
-                code: 200,
-                message: "destination Updated successfully",
+                code:200,
+                message:"destination Updated successfully",
             });
         }
-        if (rowCount > 0) {
+        if(rowCount > 0){
             return Promise.reject({
                 status: "error",
-                code: 200,
-                message: "destination cannot be Updated",
+                code:200,
+                message:"destination cannot be Updated",
             });
         }
-    } catch (e) {
+    }catch(e){
         console.log(e)
         return Promise.reject({
             status: "error",
@@ -168,19 +172,19 @@ async function updateOrderDestination(user_id, id, body) {
             message: "Error updating destination"
         })
     }
-}
+};
 
-async function checkStatus(user_id, id) {
+async function checkStatus( user_id, id){
     const queryObj = {
         text: queries.getStatus,
         values: [user_id, id],
     };
     try {
         const { rows } = await db.query(queryObj);
-        if (rows[0].status == "pending") {
+        if ( rows[0].status == "pending") {
             return Promise.resolve();
         }
-        if (rows[0].status !== "pending") {
+        if ( rows[0].status !== "pending") {
             return Promise.reject({
                 status: "error",
                 code: 409,
@@ -191,17 +195,16 @@ async function checkStatus(user_id, id) {
         return Promise.reject({
             status: "error",
             code: 500,
-            message: "Error finding user",
+            message: "Error finding Order",
         });
     }
 }
 
-
 module.exports = {
     createNewParcel,
-    getUserParcelBysenderName,
+    getSpecificUserParcel,
     getUserParcelByid,
-    deleteUserParcelById,
+    cancelParcelOrderById,
     updateOrderDestination,
     checkStatus
 }

@@ -9,9 +9,9 @@ const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
 const hashPassword = password => bcrypt.hashSync(password, salt);
 
-const generateUserToken = (id, first_name, last_name, email, is_admin, state) => {
+const generateUserToken = (id, first_name, last_name, email, is_admin, is_super_admin, state) => {
     const key = process.env.SECRET_KEY;
-    const token = jwt.sign({ id, email, first_name, last_name, is_admin, state }, key, { expiresIn: '1h' });
+    const token = jwt.sign({ id, email, first_name, last_name, is_admin, is_super_admin, state }, key, { expiresIn: '1h' });
     return token;
 }
 
@@ -40,7 +40,10 @@ const schema = {
     },
     idparams: {
         user_id: joi.number().required()
-    }
+    },
+    status: joi.object({
+        status: joi.string().valid('pending', 'shipped', 'delivered')
+    })
 }
 
 
