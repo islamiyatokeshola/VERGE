@@ -16,7 +16,6 @@ const {
 } = require("./controllers/parcelController");
 const {
     createNewAdmin,
-    checkIfUserDoesNotExistBefore,
     changeOrderStatus,
     changeOrderlocation,
     getAllParcel,
@@ -25,7 +24,7 @@ const {
 const {
     schema
 } = require("./validation")
-const { verifySuperAdminToken, verifyToken } = require("./verifyToken")
+const { verifySuperAdminToken, verifyUserToken, verifyToken } = require("./verifyToken")
 const { 
     getEmails,
     statusMail,

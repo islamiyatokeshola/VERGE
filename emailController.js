@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const queries = require("../query");
-const db = require("../database");
+const queries = require("./query");
+const db = require("./database");
 const dotenv = require("dotenv")
 
 dotenv.config()

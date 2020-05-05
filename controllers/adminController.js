@@ -207,7 +207,6 @@ async function isAdmin(id) {
 
 module.exports = {
     createNewAdmin,
-    checkIfUserDoesNotExistBefore,
     changeOrderStatus,
     changeOrderlocation,
     getAllParcel,
