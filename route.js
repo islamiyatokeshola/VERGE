@@ -25,11 +25,11 @@ const {
     schema
 } = require("./validation")
 const { verifySuperAdminToken, verifyUserToken, verifyToken } = require("./verifyToken")
-const { 
+const {
     getEmails,
     statusMail,
     locationMail
-   } = require("./emailController")
+} = require("./emailController")
 
 
 router.post(
@@ -61,7 +61,7 @@ router.post(
 );
 
 router.post(
-    "/auth/admin/signup", verifySuperAdminToken ,
+    "/auth/admin/signup", verifySuperAdminToken,
     async (req, res, next) => {
         try {
             await schema.user.validateAsync(req.body)
@@ -150,7 +150,7 @@ router.post(
     }
 )
 
-router.get("/parcel/", verifyUserToken,
+router.get("/parcel", verifyUserToken,
     async (req, res) => {
         const user_id = res.locals.user.id;
         try {
@@ -161,6 +161,8 @@ router.get("/parcel/", verifyUserToken,
         }
     }
 );
+
+
 
 router.get("/parcel/:id", verifyUserToken,
     async (req, res, next) => {
@@ -184,7 +186,6 @@ router.get("/parcel/:id", verifyUserToken,
             return res.status(e.code).json(e)
         }
     });
-
 router.put("/parcel/cancel/:id", verifyUserToken,
     async (req, res, next) => {
         try {
@@ -234,7 +235,7 @@ router.put("/parcel/destination/change/:id", verifyUserToken,
     }
 );
 
-router.put("/parcel/status/change/:id",verifyToken,
+router.put("/parcel/status/change/:id", verifyToken,
     async (req, res, next) => {
         try {
             const { id } = req.params
@@ -253,7 +254,7 @@ router.put("/parcel/status/change/:id",verifyToken,
         try {
             const result = await changeOrderStatus(id, req.body);
             const email = await getEmails(result.data.user_id)
-            await  statusMail(email,result.data.status)
+            await statusMail(email, result.data.status)
             return res.status(200).json(result)
         } catch (e) {
             return res.status(e.code).json(e)
@@ -261,7 +262,7 @@ router.put("/parcel/status/change/:id",verifyToken,
     }
 );
 
-router.put("/parcel/location/change/:id",verifyToken,
+router.put("/parcel/location/change/:id", verifyToken,
     async (req, res, next) => {
         try {
             const { id } = req.params
@@ -278,7 +279,7 @@ router.put("/parcel/location/change/:id",verifyToken,
         try {
             const result = await changeOrderlocation(id, req.body);
             const email = await getEmails(result.data.user_id)
-            await locationMail(email,result.data.location)
+            await locationMail(email, result.data.location)
             return res.status(200).json(result)
         } catch (e) {
             return res.status(e.code).json(e)

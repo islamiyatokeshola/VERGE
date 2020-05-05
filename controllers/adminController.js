@@ -22,7 +22,7 @@ async function createNewAdmin(body) {
 
         const { rowCount, rows } = await db.query(queryObj);
         const response = rows[0];
-        const tokens = generateUserToken(response.first_name, response.id, response.last_name, response.email, response.is_admin, response.is_super_admin, response.state);
+        const tokens = generateUserToken(response.id, response.first_name, response.last_name, response.email, response.is_admin, response.is_super_admin, response.state);
         const data = {
             token: tokens,
             response

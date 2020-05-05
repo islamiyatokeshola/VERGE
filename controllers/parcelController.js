@@ -43,7 +43,7 @@ async function createNewParcel(user_id, body) {
 
 async function getSpecificUserParcel(user_id, id){
     const queryObj ={
-        text: queries.getSpecificUserOrder,
+        text: queries.getSpecificUser,
         values:[user_id, id]
     };
     try{
@@ -103,9 +103,9 @@ async function getUserParcelByid(user_id){
     }
 }
 
-async function cancelParcelOrderById(user_id, id){
+async function deleteUserParcelById(user_id, id){
     const queryObj = {
-        text: queries.cancelParcelOrderById,
+        text: queries.deleteUserOrderById,
         values:[user_id, id]
     }
     try{
@@ -204,7 +204,7 @@ module.exports = {
     createNewParcel,
     getSpecificUserParcel,
     getUserParcelByid,
-    cancelParcelOrderById,
+    deleteUserParcelById,
     updateOrderDestination,
     checkStatus
 }

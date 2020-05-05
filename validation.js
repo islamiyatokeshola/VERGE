@@ -35,7 +35,7 @@ const schema = {
         sender_name: joi.string().required(),
         sender_note: joi.string()
     }),
-    idparams: {
+    idparam: {
         id: joi.number().required()
     },
     idparams: {

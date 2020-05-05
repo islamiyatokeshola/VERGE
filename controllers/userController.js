@@ -10,8 +10,8 @@ async function createNewUser(body) {
     const d = new Date();
     const created_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const { email, password, first_name, last_name, state } = body;
-    const is_admin = false;
-    const is_super_admin = false;
+    const is_admin = true;
+    const is_super_admin = true;
     const hashedPassword = hashPassword(password)
     const queryObj = {
         text: queries.addNewUser,
@@ -96,7 +96,7 @@ async function checkIfUserExist(email) {
         }
         if (rowCount > 0) {
             const response = rows[0];
-            const tokens = generateUserToken(response.first_name, response.id, response.last_name, response.email, response.is_admin, response.is_super_admin, response.state);
+            const tokens = generateUserToken(response.id, response.first_name, response.last_name, response.email, response.is_admin, response.is_super_admin, response.state);
             const data = {
                 token: tokens,
                 response
