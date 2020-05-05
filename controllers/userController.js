@@ -15,7 +15,7 @@ async function createNewUser(body) {
     const hashedPassword = hashPassword(password)
     const queryObj = {
         text: queries.addNewUser,
-        values: [email, hashedPassword, first_name, last_name, state, created_at, created_at, is_admin, is_super_admin],
+        values: [email, hashedPassword, first_name, last_name, state, created_at, is_admin, is_super_admin],
     };
 
     try {
