@@ -10,8 +10,8 @@ async function createNewUser(body) {
     const d = new Date();
     const created_at = moment(d).format("YYYY-MM-DD HH:mm:ss");
     const { email, password, first_name, last_name, state } = body;
-    const is_admin = true;
-    const is_super_admin = true;
+    const is_admin = false;
+    const is_super_admin = false;
     const hashedPassword = hashPassword(password)
     const queryObj = {
         text: queries.addNewUser,
